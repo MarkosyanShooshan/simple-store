@@ -1,0 +1,102 @@
+{% extends "store/base.html" %}
+
+{% block title %}Luma Store — {{ t.shop }}{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container hero-grid">
+        <div class="hero-copy">
+            <p class="eyebrow">{{ t.hero_label }}</p>
+            <h1>{{ t.hero_title }}</h1>
+            <p class="hero-text">{{ t.hero_text }}</p>
+            <div class="hero-actions">
+                <a class="button primary" href="#products">{{ t.shop_now }}</a>
+                <a class="text-link" href="{% url 'saved_items' %}">{{ t.browse_saved }} →</a>
+            </div>
+            <div class="hero-points">
+                <span>✓ {{ t.quality }}</span>
+                <span>✓ {{ t.delivery }}</span>
+            </div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+            <div class="art-card art-card-one"><span>💡</span></div>
+            <div class="art-card art-card-two"><span>🎧</span></div>
+            <div class="art-ring"></div>
+            <span class="spark spark-one">✦</span>
+            <span class="spark spark-two">✦</span>
+        </div>
+    </div>
+</section>
+
+<section class="shop-section" id="products">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">LUMA COLLECTION</p>
+                <h2>{{ t.products }}</h2>
+                <p>{{ t.products_text }}</p>
+            </div>
+            <span class="result-count">{{ products|length }} {{ t.results }}</span>
+        </div>
+
+        <form class="filters" method="get">
+            <div class="field search-field">
+                <label for="q">{{ t.search }}</label>
+                <div class="input-with-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+                    <input id="q" name="q" value="{{ filters.q }}" placeholder="{{ t.search_placeholder }}">
+                </div>
+            </div>
+            <div class="field">
+                <label for="category">{{ t.category }}</label>
+                <select id="category" name="category">
+                    <option value="">{{ t.all_categories }}</option>
+                    <option value="home" {% if filters.category == 'home' %}selected{% endif %}>{{ t.home_cat }}</option>
+                    <option value="tech" {% if filters.category == 'tech' %}selected{% endif %}>{{ t.tech_cat }}</option>
+                    <option value="fashion" {% if filters.category == 'fashion' %}selected{% endif %}>{{ t.fashion_cat }}</option>
+                    <option value="wellness" {% if filters.category == 'wellness' %}selected{% endif %}>{{ t.wellness_cat }}</option>
+                </select>
+            </div>
+            <div class="field price-field">
+                <label>{{ t.min_price }} / {{ t.max_price }}</label>
+                <div class="price-inputs">
+                    <input type="number" min="0" step="100" name="min_price" value="{{ filters.min_price }}" placeholder="0">
+                    <span>—</span>
+                    <input type="number" min="0" step="100" name="max_price" value="{{ filters.max_price }}" placeholder="50000">
+                </div>
+            </div>
+            <div class="field">
+                <label for="sort">{{ t.sort }}</label>
+                <select id="sort" name="sort">
+                    <option value="featured" {% if filters.sort == 'featured' %}selected{% endif %}>{{ t.featured }}</option>
+                    <option value="price_low" {% if filters.sort == 'price_low' %}selected{% endif %}>{{ t.price_low }}</option>
+                    <option value="price_high" {% if filters.sort == 'price_high' %}selected{% endif %}>{{ t.price_high }}</option>
+                    <option value="name" {% if filters.sort == 'name' %}selected{% endif %}>{{ t.name_az }}</option>
+                </select>
+            </div>
+            <label class="checkbox-field">
+                <input type="checkbox" name="in_stock" value="1" {% if filters.in_stock == '1' %}checked{% endif %}>
+                <span>{{ t.in_stock_only }}</span>
+            </label>
+            <div class="filter-actions">
+                <button class="button dark" type="submit">{{ t.apply_filters }}</button>
+                <a href="{% url 'product_list' %}#products">{{ t.clear }}</a>
+            </div>
+        </form>
+
+        {% if products %}
+            <div class="product-grid">
+                {% for product in products %}
+                    {% include "store/product_card.html" %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <span>⌕</span>
+                <h3>{{ t.no_products }}</h3>
+                <a class="button primary" href="{% url 'product_list' %}">{{ t.clear }}</a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

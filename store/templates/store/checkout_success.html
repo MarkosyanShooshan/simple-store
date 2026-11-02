@@ -1,0 +1,19 @@
+{% extends "store/base.html" %}
+
+{% block title %}{{ t.checkout_title }} — Luma Store{% endblock %}
+
+{% block content %}
+<section class="success-section">
+    <div class="success-card">
+        <div class="success-icon">✓</div>
+        <p class="eyebrow">LUMA DEMO ORDER</p>
+        <h1>{{ t.checkout_title }}</h1>
+        <p>{{ t.checkout_text }}</p>
+        <div class="success-total">
+            <span>{{ t.order_total }}</span>
+            <strong>{{ total|floatformat:0 }} ֏</strong>
+        </div>
+        <a class="button primary" href="{% url 'product_list' %}">{{ t.back_home }}</a>
+    </div>
+</section>
+{% endblock %}

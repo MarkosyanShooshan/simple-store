@@ -1,0 +1,57 @@
+<article class="product-card">
+   <a class="product-visual" href="{{ product.get_absolute_url }}" style="--product-color: {{ product.color }}">
+         {% if product.old_price %}<span class="sale-badge">SALE</span>{% endif %}
+         {% if product.image %}
+             <img src="{{ product.image.url }}" alt="{{ product.name_en }}" class="product-image">
+         {% else %}
+             <span class="product-emoji" aria-hidden="true">{{ product.emoji }}</span>
+         {% endif %}
+     </a>
+
+    <div class="product-info">
+        <div class="product-meta">
+            <span>
+                {% if product.category == 'home' %}{{ t.home_cat }}
+                {% elif product.category == 'tech' %}{{ t.tech_cat }}
+                {% elif product.category == 'fashion' %}{{ t.fashion_cat }}
+                {% else %}{{ t.wellness_cat }}{% endif %}
+            </span>
+            <span>★ {{ product.rating }}</span>
+        </div>
+        <a class="product-name" href="{{ product.get_absolute_url }}">{{ product.display_name }}</a>
+        <p class="product-description">{{ product.display_description|truncatechars:88 }}</p>
+        <div class="product-price-row">
+            <strong>{{ product.price|floatformat:0 }} ֏</strong>
+            {% if product.old_price %}<del>{{ product.old_price|floatformat:0 }} ֏</del>{% endif %}
+        </div>
+        <div class="stock {% if not product.in_stock %}out{% endif %}">
+            <span></span>
+            {% if product.in_stock %}{{ t.in_stock }} · {{ product.stock }} {{ t.left }}{% else %}{{ t.out_of_stock }}{% endif %}
+        </div>
+        <div class="card-actions">
+            <form action="{% url 'add_to_basket' product.id %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <button class="button dark full" type="submit" {% if not product.in_stock %}disabled{% endif %}>{{ t.add_basket }}</button>
+            </form>
+            {% if product.id in saved_ids %}
+                <form action="{% url 'remove_saved' product.id %}" method="post">
+                    {% csrf_token %}
+                    <button class="icon-button saved" type="submit" title="{{ t.saved_item }}" aria-label="{{ t.saved_item }}">♥</button>
+                </form>
+            {% else %}
+                <form action="{% url 'save_for_later' product.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button class="icon-button" type="submit" title="{{ t.save_later }}" aria-label="{{ t.save_later }}">♡</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</article>
+
+
+
+
+
+

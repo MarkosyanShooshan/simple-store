@@ -1,0 +1,55 @@
+{% extends "store/base.html" %}
+
+{% block title %}{{ t.saved_title }} — Luma Store{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <div class="container">
+        <div class="page-heading saved-heading">
+            <p class="eyebrow">LUMA WISHLIST</p>
+            <h1>{{ t.saved_title }}</h1>
+            <p>{{ products|length }} {{ t.results }}</p>
+        </div>
+
+        {% if products %}
+            <div class="saved-list">
+                {% for product in products %}
+                    <article class="saved-row">
+                        <a class="saved-visual" href="{{ product.get_absolute_url }}" style="--product-color: {{ product.color }}">
+                            <span>{{ product.emoji }}</span>
+                        </a>
+                        <div class="saved-copy">
+                            <p class="small-label">
+                                {% if product.category == 'home' %}{{ t.home_cat }}
+                                {% elif product.category == 'tech' %}{{ t.tech_cat }}
+                                {% elif product.category == 'fashion' %}{{ t.fashion_cat }}
+                                {% else %}{{ t.wellness_cat }}{% endif %}
+                            </p>
+                            <a class="product-name" href="{{ product.get_absolute_url }}">{{ product.display_name }}</a>
+                            <p>{{ product.display_description|truncatechars:120 }}</p>
+                            <strong>{{ product.price|floatformat:0 }} ֏</strong>
+                        </div>
+                        <div class="saved-actions">
+                            <form action="{% url 'add_to_basket' product.id %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{% url 'basket' %}">
+                                <button class="button dark" type="submit" {% if not product.in_stock %}disabled{% endif %}>{{ t.move_basket }}</button>
+                            </form>
+                            <form action="{% url 'remove_saved' product.id %}" method="post">
+                                {% csrf_token %}
+                                <button class="text-button" type="submit">{{ t.remove }}</button>
+                            </form>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <span>♡</span>
+                <h2>{{ t.saved_empty }}</h2>
+                <a class="button primary" href="{% url 'product_list' %}#products">{{ t.continue_shopping }}</a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
